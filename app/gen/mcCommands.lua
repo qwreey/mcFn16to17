@@ -1,0 +1,1 @@
+local l=_G.loadModule;return{execute=l("execute","mcCommands/execute.lua");replaceitem=l("replaceitem","mcCommands/replaceitem.lua")};
