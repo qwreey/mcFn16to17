@@ -1,10 +1,5 @@
 local export = {};
 
-local function pop(str)
-    
-    return;
-end
-
 -- 1.16 의 리플레이스 아이템을 1.17 의 item 커맨드로 다시 작성시킴
 function export:comp(str)
     local rt = "execute";
@@ -29,13 +24,55 @@ function export:comp(str)
             local sel,_,endp = self.mcLibs.selector(str);
             str = str:sub(endp+1,-1);
             rt = rt .. " at " .. sel;
-        elseif com == "as" then
+        elseif com == "as" then -- 에즈 셀렉터자
             local sel,_,endp = self.mcLibs.selector(str);
             str = str:sub(endp+1,-1);
             rt = rt .. " as " .. sel;
-        elseif com == "run" then
-            return rt .. " run " .. self.compileCmd(str:match("^ *(.+)$"));
-        elseif com == "run" then
+        elseif com == "positioned" then
+            local nextM,nextN = str:match("( *([^ ]+) *)");
+            if nextN == "as" then
+                local sel,_,endp = self.mcLibs.selector(str);
+                str = str:sub(endp+1,-1);
+                rt = rt .. " positioned as " .. sel;
+                --str = str:sub()
+            else
+                str = str:sub(#nextM + 1,-1);
+                local posM,posN = str:match("( *([~%^%d%.]+ [~%^%d%.]+ [~%^%d%.]+) *)");
+                str = str:sub(#posM + 1,-1);
+                rt = rt .. " positioned " .. posN;
+            end
+        elseif com == "rotated" then
+            local nextM,nextN = str:match("( *([^ ]+) *)");
+            if nextN == "as" then
+                local sel,_,endp = self.mcLibs.selector(str);
+                str = str:sub(endp+1,-1);
+                rt = rt .. " rotated as " .. sel;
+                --str = str:sub()
+            else
+                str = str:sub(#nextM + 1,-1);
+                local posM,posN = str:match("( *([~%^%d%.]+ [~%^%d%.]+) *)");
+                str = str:sub(#posM + 1,-1);
+                rt = rt .. " rotated " .. posN;
+            end
+        elseif com == "facing" then
+            local nextM,nextN = str:match("( *([^ ]+) *)");
+            if nextN == "entity" then
+                local sel,_,endp = self.mcLibs.selector(str);
+                str = str:sub(endp+1,-1);
+                local toM,toN = str:match("( *([^ ]+) *)"); -- feet/eyes
+                str = str:sub(#toM+1,-1);
+                rt = rt .. " facing entity " .. sel .. " " .. toN;
+            else
+                str = str:sub(#nextM + 1,-1);
+                local posM,posN = str:match("( *([~%^%d%.]+ [~%^%d%.]+ [~%^%d%.]+) *)");
+                str = str:sub(#posM + 1,-1);
+                rt = rt .. " facing " .. posN;
+            end
+        elseif com == "align" then
+            local nextM,nextN = str:match("( *([^ ]+) *)");
+            str = str:sub(#nextM + 1,-1);
+            rt = rt .. " align " .. nextN;
+        elseif com == "run" then -- 커맨드 익스커션
             return rt .. " run " .. self.compileCmd(str:match("^ *(.+)$"));
         else
             rt = rt .. " " .. com;
