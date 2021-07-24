@@ -27,6 +27,14 @@ local function compileCmd(cmdstr)
 end
 env.compileCmd = compileCmd;
 
+local function log(...)
+    for _,v in pairs({...}) do
+        io.write(tostring(v));
+    end
+    io.write("\n");
+end
+env.log = log;
+
 -- commandline command
 local commands = {
     ["build"] = {
@@ -40,11 +48,11 @@ local commands = {
         execute = function (self,args,options)
             local arg1 = args[1];
             if (not arg1) or (arg1 == "") then
-                io.write("arg #1 was not given; this command requires arg #1, more information for rebuild help build\n");
+                log("arg #1 was not given; this command requires arg #1, more information for rebuild help build");
                 return;
             end
             for path in arg1:gmatch("[^,]+") do
-                io.write("build : ",path,"\n");
+                log("build : ",path);
                 local file = io.open(path);
                 local str = file:read("*a");
                 file:close();
@@ -77,13 +85,13 @@ local commands = {
         );
         execute = function (self,args,options)
             local command = "";
-            for _,str in ipairs(args) do
-                command = command .. " " .. str;
+            for i,str in ipairs(args) do
+                command = command .. (i ~= 1 and " " or "") .. str;
             end
             if (not command) or command == "" then
-                io.write("arg #1 was not given; this command requires arg #1, more information for rebuild help command\n");
+                log("arg #1 was not given; this command requires arg #1, more information for rebuild help command");
             else
-                io.write(tostring(compileCmd(command)),"\n");
+                log(compileCmd(command));
             end
         end;
     };
@@ -92,9 +100,9 @@ local commands = {
 commands.help.execute = function (self,args,options)
     if args[1] then
     else
-        io.write("rebuild your minecraft 1.16's mcfunction to 1.17's mcfunction\nthis program replace 'replaceitem' to 'item', it will work same with old version!\nVERSION : 1.1\n\nlist of all commands:\n\n")
+        log("rebuild your minecraft 1.16's mcfunction to 1.17's mcfunction\nthis program replace 'replaceitem' to 'item', it will work same with old version!\nVERSION : 1.1\n\nlist of all commands:\n")
         for _,c in pairs(commands) do
-            io.write(c.help,"\n");
+            log(c.help);
         end
     end
 end
@@ -106,15 +114,15 @@ table.remove(args,1);
 local commandArg = loadModule("commandArg","libs/commandArg.lua");
 local thisCommand = commands[commandName];
 if not commandName then
-    io.write(("Please set command to use this program!\nuse : rebuild <Command> [args/options]\nenter 'rebuild help' for more information!\n"):format(tostring(commandName)));
+    log(("Please set command to use this program!\nuse : rebuild <Command> [args/options]\nenter 'rebuild help' for more information!"):format(tostring(commandName)));
     return;
 elseif not thisCommand then
-    io.write(("Command '%s' not found!\n"):format(tostring(commandName)));
+    log(("Command '%s' not found!"):format(tostring(commandName)));
     return;
 end
 local pass,msg = pcall(thisCommand.execute,thisCommand,commandArg(args,thisCommand.options));
 if not pass then
-    io.write(("an error occured on running command, enter 'rebuild help %s' for more information\n"):format(commandName));
-    io.write(msg,"\n");
+    log(("an error occured on running command, enter 'rebuild help %s' for more information"):format(commandName));
+    log(msg);
     return;
 end

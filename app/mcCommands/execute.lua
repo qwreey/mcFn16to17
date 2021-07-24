@@ -68,10 +68,30 @@ function export:comp(str)
                 str = str:sub(#posM + 1,-1);
                 rt = rt .. " facing " .. posN;
             end
+        elseif com == "in" then
+            local nextM,nextN = str:match("( *([^ ]+) *)");
+            str = str:sub(#nextM + 1,-1);
+            rt = rt .. " in " .. nextN;
+        elseif com == "anchored" then
+            local nextM,nextN = str:match("( *([^ ]+) *)");
+            str = str:sub(#nextM + 1,-1);
+            rt = rt .. " anchored " .. nextN;
         elseif com == "align" then
             local nextM,nextN = str:match("( *([^ ]+) *)");
             str = str:sub(#nextM + 1,-1);
             rt = rt .. " align " .. nextN;
+        elseif com == "if" or com == "unless" then
+            local nextM,nextN = str:match("( *([^ ]+) *)");
+            str = str:sub(#nextM + 1,-1);
+            local args = "";
+            if nextN == "block" then
+                local posM,posN = str:match("( *([~%^%d%.]+ [~%^%d%.]+ [~%^%d%.]+) *)");
+                str = str:sub(#posM + 1,-1);
+                args = args .. " " .. posN;
+            elseif nextN == "blocks" then
+
+            end
+            rt = rt .. (" %s %s%s"):format(com,nextN,args);
         elseif com == "run" then -- 커맨드 익스커션
             return rt .. " run " .. self.compileCmd(str:match("^ *(.+)$"));
         else
