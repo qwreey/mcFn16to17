@@ -13,13 +13,13 @@ return function (str)
             local this = str:sub(i,i); -- string array 에서 char 하나 때오기
             if strMode then -- 스탯이 str 모드이면
                 if espMode then
+                    espMode = false; -- 이스캐이프 끄기
+                else               
                     if this == "\"" then -- str 모드 꺼짐
                         strMode = false;
                     elseif this == "\\" then -- 이스캐이프 문자
                         espMode = true;
                     end
-                else
-                    espMode = false; -- 이스캐이프 끄기
                 end
             else
                 if this == "\"" then -- str 모드 켜짐
