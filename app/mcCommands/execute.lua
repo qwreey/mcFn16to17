@@ -89,7 +89,7 @@ function export:comp(str)
                 str = str:sub(#posM + 1,-1);
                 args = args .. " " .. posN;
             elseif nextN == "blocks" then
-
+                
             end
             rt = rt .. (" %s %s%s"):format(com,nextN,args);
         elseif com == "run" then -- 커맨드 익스커션
