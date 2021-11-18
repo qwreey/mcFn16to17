@@ -1,5 +1,4 @@
 -- require from bin
-local luvi = require('luvi');
 _G.loadModule = function (idf,path)
     idf = idf:match("%.?([^%.]+)$");
     luvi.bundle.register(idf,path);
